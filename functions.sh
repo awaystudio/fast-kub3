@@ -19,7 +19,7 @@ install_k3s() {
 install_k9s (){
     echo "Installing K9s..."
     cd ~
-    wget https://github.com/derailed/k9s/releases/latest/download/k9s_linux_amd64.deb && sudo apt install ./k9s_linux_amd64.deb ; rm ./k9s_linux_*
+    wget https://github.com/derailed/k9s/releases/latest/download/k9s_linux_arm64.deb && sudo apt install ./k9s_linux_arm64.deb ; rm ./k9s_linux_*
 }
 
 config_k9s (){
