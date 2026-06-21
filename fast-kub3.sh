@@ -1,14 +1,15 @@
 #!/bin/bash
 
-TITLE="src/title.txt"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+TITLE="$SCRIPT_DIR/src/title.txt"
 
 # Importa tutte le funzioni
-source ./functions.sh
+source "$SCRIPT_DIR/functions.sh"
 
 # pannello principale
 menu(){
    clear
-    cat $TITLE
+    cat "$TITLE"
     echo "----------------------------------------"
     echo "Welcome to the FAST-KUB3 Installer"
     echo "----------------------------------------"
@@ -21,7 +22,7 @@ menu(){
 
     while :
     do
-        read choice
+        read -r choice
         case $choice in
             1) clear; echo "You have selected the option 1"
                echo "Installing... "
@@ -44,4 +45,8 @@ menu(){
     done
 }
 
-menu
+# Avvia il menu solo se lo script è eseguito direttamente,
+# non quando viene "source"-ato (es. dai test bats).
+if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+    menu
+fi
