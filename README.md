@@ -45,6 +45,19 @@ Remove → Uninstalls K3s, K9s, and removes Jellyfin
 
 Quit → Exit the script
 
+## 🧪 Testing
+
+The test suite uses **[bats](https://github.com/bats-core/bats-core)** (Bash Automated Testing System).  
+All external commands (`curl`, `wget`, `apt`, `kubectl`, `sudo`, …) are replaced by stub binaries
+in a temporary directory so tests run without touching the real system.
+
+```bash
+sudo apt install bats
+bats tests/fast-kub3.bats
+```
+
+A GitHub Actions workflow runs `shellcheck` and `bats` automatically on every push and pull request.
+
 ## 📁 File Structure
 ```
 fast-kub3/
