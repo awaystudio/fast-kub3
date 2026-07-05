@@ -1,10 +1,10 @@
-## 🚀 fast-kub3 for Raspberry Pi
+## 🚀 fast-kub3
 
 ![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)
 ![Status](https://img.shields.io/badge/status-stable-orange)
-![Version](https://img.shields.io/badge/version-1.0.0-brightgreen)
+![Version](https://img.shields.io/badge/version-1.1.0-brightgreen)
 
-fast-kub3 is a Bash-based automation tool designed to quickly set up a lightweight Kubernetes environment on a Raspberry Pi using K3s, with optional deployment of a sample application (Jellyfin) and the K9s CLI management interface.
+fast-kub3 is a Bash-based automation tool designed to quickly set up a lightweight Kubernetes environment using K3s, with optional deployment of a sample application (Jellyfin) and the K9s CLI management interface. It runs on both **Raspberry Pi (ARM)** and **x86 machines / VMs (amd64)** — the host architecture is detected automatically.
 
 ## ✨ Features
 ✅ Automated installation of K3s (lightweight Kubernetes)
@@ -15,8 +15,10 @@ fast-kub3 is a Bash-based automation tool designed to quickly set up a lightweig
 
 ✅ Clean removal of all installed components
 
+✅ Automatic host-architecture detection (installs the correct K9s build for amd64 / arm64 / arm)
+
 ## 🧱 Requirements
-🐧 Raspberry Pi (ARMv7 or compatible)
+🐧 A Linux host: Raspberry Pi (ARM: arm64/armv7) **or** an x86_64/amd64 machine or VM
 
 📦 Operating system: Raspberry Pi OS or any Debian-based distro
 
