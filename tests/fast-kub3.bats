@@ -110,10 +110,62 @@ _run_func() {
     [[ "$output" == *"Installing K3s"* ]]
 }
 
-@test "install_k9s: chiama wget con URL per arm64.deb" {
+@test "install_k9s: chiama wget con URL per il .deb dell'arch corrente" {
     run _run_func install_k9s
     grep -q "wget" "$CALL_LOG"
-    grep "wget" "$CALL_LOG" | grep -q "k9s_linux_arm64.deb"
+    # L'URL deve contenere il pacchetto k9s per l'architettura rilevata
+    # (amd64 su runner x86, arm64/arm su Raspberry Pi). Deriviamo l'atteso
+    # dalla stessa mappatura di detect_k9s_arch.
+    case "$(uname -m)" in
+        x86_64|amd64)        expected="amd64" ;;
+        aarch64|arm64)       expected="arm64" ;;
+        armv7l|armv6l|arm)   expected="arm" ;;
+        *)                   expected="amd64" ;;
+    esac
+    grep "wget" "$CALL_LOG" | grep -q "k9s_linux_${expected}.deb"
+}
+
+@test "install_k9s: stampa l'architettura rilevata" {
+    run _run_func install_k9s
+    [[ "$output" == *"Detected host architecture"* ]]
+}
+
+# ── detect_k9s_arch: mappatura uname -m -> suffisso pacchetto k9s ────────────
+# Ogni test inietta uno stub di `uname` che finge una specifica architettura.
+
+_run_func_with_uname() {
+    local fake_machine="$1"; shift
+    local func="$1"; shift
+    cat > "$STUB_DIR/uname" <<STUB
+#!/usr/bin/env bash
+if [[ "\$*" == *-m* ]]; then echo "$fake_machine"; else /usr/bin/uname "\$@"; fi
+STUB
+    chmod +x "$STUB_DIR/uname"
+    _run_func "$func" "$@"
+}
+
+@test "detect_k9s_arch: x86_64 -> amd64" {
+    run _run_func_with_uname "x86_64" detect_k9s_arch
+    [ "$status" -eq 0 ]
+    [ "$output" = "amd64" ]
+}
+
+@test "detect_k9s_arch: aarch64 -> arm64" {
+    run _run_func_with_uname "aarch64" detect_k9s_arch
+    [ "$status" -eq 0 ]
+    [ "$output" = "arm64" ]
+}
+
+@test "detect_k9s_arch: armv7l -> arm" {
+    run _run_func_with_uname "armv7l" detect_k9s_arch
+    [ "$status" -eq 0 ]
+    [ "$output" = "arm" ]
+}
+
+@test "detect_k9s_arch: architettura non supportata -> errore (exit 1)" {
+    run _run_func_with_uname "riscv64" detect_k9s_arch
+    [ "$status" -ne 0 ]
+    [[ "$output" == *"Unsupported architecture"* ]]
 }
 
 @test "install_k9s: stampa messaggio 'Installing K9s...'" {

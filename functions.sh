@@ -17,8 +17,29 @@ install_k3s() {
 
 install_k9s (){
     echo "Installing K9s..."
+    local arch
+    arch="$(detect_k9s_arch)" || exit 1
+    echo "Detected host architecture: $(uname -m) -> k9s package '$arch'"
     cd ~ || exit 1
-    wget https://github.com/derailed/k9s/releases/latest/download/k9s_linux_arm64.deb && sudo apt install ./k9s_linux_arm64.deb ; rm ./k9s_linux_*
+    wget "https://github.com/derailed/k9s/releases/latest/download/k9s_linux_${arch}.deb" && sudo apt install "./k9s_linux_${arch}.deb" ; rm ./k9s_linux_*
+}
+
+# Mappa l'architettura dell'host (uname -m) sul suffisso del pacchetto .deb
+# rilasciato da k9s. Cosi' fast-kub3 gira sia su Raspberry Pi (arm64/arm) sia
+# su VM/server x86 (amd64), non solo su ARM.
+detect_k9s_arch() {
+    local machine
+    machine="$(uname -m)"
+    case "$machine" in
+        x86_64 | amd64)          echo "amd64" ;;
+        aarch64 | arm64)         echo "arm64" ;;
+        armv7l | armv6l | arm)   echo "arm" ;;
+        *)
+            echo "Unsupported architecture: $machine" >&2
+            echo "Supported: x86_64/amd64, aarch64/arm64, armv7l/armv6l/arm." >&2
+            return 1
+            ;;
+    esac
 }
 
 config_k9s (){
