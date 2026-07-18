@@ -30,7 +30,7 @@ fast-kub3 is a Bash-based automation tool designed to quickly set up a lightweig
 Clone the repository and run the main installer script:
 
 ```
-git clone https://github.com/your-user/fast-kub3.git
+git clone https://github.com/awaystudio/fast-kub3.git
 cd fast-kub3
 chmod +x *.sh
 ./fast-kub3.sh
